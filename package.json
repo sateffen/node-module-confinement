@@ -1,0 +1,12 @@
+{
+  "name": "node-module-confinement",
+  "version": "0.0.0",
+  "main": "src/lib.js",
+  "scripts": {
+    "lint": "eslint -c .eslintrc src"
+  },
+  "devDependencies": {
+    "eslint": "~5.3.0",
+    "eslint-config-google": "~0.9.1"
+  }
+}

@@ -7,23 +7,25 @@ class ModuleConfinement {
      * @param {Object} aRawConfinement
      */
     constructor(aRawConfinement) {
+        const rawConfinement = aRawConfinement || {};
+
         /**
          * Whether to allow internal modules completely or not
          * @type {boolean}
          */
-        this.allowInternalModules = Boolean(aRawConfinement.allowInternalModules);
+        this.allowInternalModules = Boolean(rawConfinement.allowInternalModules);
 
         /**
          * The blacklist of modules to disallow completely
          * @type {Array<string>}
          */
-        this.blackList = Array.isArray(aRawConfinement.blacklist) ? aRawConfinement.blacklist : [];
+        this.blackList = Array.isArray(rawConfinement.blackList) ? rawConfinement.blackList : [];
 
         /**
          * The whitelist of modules to allow
          * @type {Array<string>}
          */
-        this.whiteList = Array.isArray(aRawConfinement.whitelist) ? aRawConfinement.whitelist : [];
+        this.whiteList = Array.isArray(rawConfinement.whiteList) ? rawConfinement.whiteList : [];
     }
 }
 

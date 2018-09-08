@@ -1,6 +1,7 @@
 const NodeModule = require('module');
 const ModuleConfinement = require('./moduleconfinement');
 
+const confinementDefinitionSymbol = Symbol('node-module-confinement');
 let generalConfinementInstalled = false;
 
 /**
@@ -13,11 +14,14 @@ function installGeneralConfinement(aConfinementConfiguration) {
     }
 
     generalConfinementInstalled = true;
+    const confinementDefinition = Object.freeze(new ModuleConfinement(aConfinementConfiguration));
     NodeModule.prototype.require = new Proxy(NodeModule.prototype.require, {
         apply(aTarget, aThisContext, aArgumentsList) {
             const newModule = Reflect.apply(aTarget, aThisContext, aArgumentsList);
 
-            newModule.confinementDefinition = Object.freeze(new ModuleConfinement(aConfinementConfiguration));
+            Object.defineProperty(newModule, confinementDefinitionSymbol, {
+                value: confinementDefinition,
+            });
 
             return newModule;
         },
@@ -34,7 +38,10 @@ function patchConfinedRequire() {
 
         // and than instanciate the file
         const newModuleInstance = new NodeModule(aPath, this);
-        newModuleInstance.confinementDefinition = Object.freeze(new ModuleConfinement(aConfinementConfiguration));
+
+        Object.defineProperty(newModuleInstance, confinementDefinitionSymbol, {
+            value: Object.freeze(new ModuleConfinement(aConfinementConfiguration)),
+        });
 
         // next we need to publish this module, so the outer world knows about this
         NodeModule._cache[fileToLoad] = newModuleInstance;
@@ -66,4 +73,4 @@ module.exports = {
     patchConfinedRequire,
 };
 
-require('./require');
+require('./require').patch(confinementDefinitionSymbol);

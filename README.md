@@ -17,9 +17,9 @@ you which confinement was defied, and which module did this.
 
 When requiring `node-module-confinement` the original `require` function of your node process is overwritten.
 The overwritten version checks each require-call for a confinement, and checks the rules provided by it.
-A confinement itself is defined on the module instance as `confinementDefinition` property. If no confinement
-definition is found on the own module, the module-tree is traversed up, until one is found, or the root is
-reached. So in a structure:
+A confinement itself is defined on the module instance as `Symbol('node-module-confinement')` property. If
+no confinement definition is found on the own module, the module-tree is traversed up, until one is found, or
+the root is reached. So in a structure:
 
 ```
 root

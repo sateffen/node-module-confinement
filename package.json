@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "main": "src/lib.js",
   "scripts": {
-    "lint": "eslint -c .eslintrc src"
+    "lint": "eslint -c .eslintrc src",
+    "test": "jest --config=jest.json",
+    "test:watch": "jest --config=jest.json --watch"
   },
   "devDependencies": {
     "eslint": "~5.5.0",

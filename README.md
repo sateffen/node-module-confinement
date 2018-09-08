@@ -1,5 +1,7 @@
 # node-module-confinement
 
+![Codeship Status for sateffen/node-module-confinement](https://app.codeship.com/projects/1cddd2b0-9582-0136-366d-3e732d40e2ee/status?branch=master)
+
 **warning**: Early preview
 
 This module is for a security module, that creates confinements of for node_modules.

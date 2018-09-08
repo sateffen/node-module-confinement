@@ -1,5 +1,6 @@
 const NodeModule = require('module');
 const ModuleConfinement = require('./moduleconfinement');
+const {patchRequire} = require('./require');
 
 const confinementDefinitionSymbol = Symbol('node-module-confinement');
 let generalConfinementInstalled = false;
@@ -68,9 +69,9 @@ function patchConfinedRequire() {
     };
 }
 
+patchRequire(confinementDefinitionSymbol);
+
 module.exports = {
     installGeneralConfinement,
     patchConfinedRequire,
 };
-
-require('./require').patch(confinementDefinitionSymbol);

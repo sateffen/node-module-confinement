@@ -5,7 +5,7 @@ const {isAllowedToCall} = require('./utils');
  * Patches the require function with a confinement checking one
  * @param {Symbol} aConfinementSymbol The confinement symbol to use
  */
-function patch(aConfinementSymbol) {
+function patchRequire(aConfinementSymbol) {
     NodeModule.prototype.require = new Proxy(NodeModule.prototype.require, {
         apply(aTarget, aThisContext, aArgumentsList) {
             let confinedModule = aThisContext;
@@ -29,5 +29,5 @@ function patch(aConfinementSymbol) {
 }
 
 module.exports = {
-    patch,
+    patchRequire,
 };

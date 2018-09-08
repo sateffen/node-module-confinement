@@ -87,7 +87,7 @@ nodeModuleConfinement.installGeneralConfinement({
 const secondModule = require('second-module');
 ```
 
-### patchConfinedRequire
+### patchConfinedRequire()
 
 This is an utility function, patching the general module-prototype with a new function called `confinedRequire`.
 The new function has the signature `module.confinedRequire(path, confinement)`, and is an alternative version

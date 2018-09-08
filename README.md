@@ -4,18 +4,18 @@
 
 This package provides a simple way for confining modules, and preventing them to load unwanted other modules.
 
-For this confinement you can setup a blacklist and a whitelist. You can tell the confinement to prevent node
+For this confinement you can set up a blacklist and a whitelist. You can tell the confinement to prevent node
 internal modules completely, only allowing a few ones by whitelist. That's useful when loading code you don't
 know or don't trust, like packages from npm or plugins for your software.
 
-If anything defys the confinement, an error is thrown to prevent anything bad from happening. The error tells
+If anything defies the confinement, an error is thrown to prevent anything bad from happening. The error tells
 you which confinement was defied, and which module did this.
 
 ## API
 
 ### require
 
-When requiring `node-module-confinement` the original `require` function of your node process is overwritten.
+After requiring `node-module-confinement` the original `require` function of your node process is overwritten.
 The overwritten version checks each require-call for a confinement, and checks the rules provided by it.
 A confinement itself is defined on the module instance as `Symbol('node-module-confinement')` property. If
 no confinement definition is found on the own module, the module-tree is traversed up, until one is found, or
@@ -89,9 +89,9 @@ const secondModule = require('second-module');
 
 ### patchConfinedRequire()
 
-This is an utility function, patching the general module-prototype with a new function called `confinedRequire`.
+This is a utility function, patching the general module-prototype with a new function called `confinedRequire`.
 The new function has the signature `module.confinedRequire(path, confinement)`, and is an alternative version
-of require, which applys given confinement - regardless of any general confinements.
+of require, which applies given confinement - regardless of any general confinements.
 
 You have to patch the module explicitly, because this modifies the prototype of an internal module. Why patch
 the module prototype? Because that way the correct module-instance is referenced, and the module-tree is not

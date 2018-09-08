@@ -17,7 +17,7 @@ function installGeneralConfinement(aConfinementConfiguration) {
         apply(aTarget, aThisContext, aArgumentsList) {
             const newModule = Reflect.apply(aTarget, aThisContext, aArgumentsList);
 
-            newModule.confinementDefinition = new ModuleConfinement(aConfinementConfiguration);
+            newModule.confinementDefinition = Object.freeze(new ModuleConfinement(aConfinementConfiguration));
 
             return newModule;
         },
@@ -34,7 +34,7 @@ function patchConfinedRequire() {
 
         // and than instanciate the file
         const newModuleInstance = new NodeModule(aPath, this);
-        newModuleInstance.confinementDefinition = new ModuleConfinement(aConfinementConfiguration);
+        newModuleInstance.confinementDefinition = Object.freeze(new ModuleConfinement(aConfinementConfiguration));
 
         // next we need to publish this module, so the outer world knows about this
         NodeModule._cache[fileToLoad] = newModuleInstance;

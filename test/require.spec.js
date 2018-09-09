@@ -1,7 +1,8 @@
+jest.mock('../src/utils');
+
 const NodeModule = require('module');
 const {patchRequire} = require('../src/require');
 
-jest.mock('../src/utils');
 const utils = require('../src/utils');
 
 const originalRequire = NodeModule.prototype.require;
@@ -40,7 +41,7 @@ describe('require', () => {
             NodeModule.prototype.require = originalRequire;
         });
 
-        test('require should call through if no confinement is found', () => {
+        test('It should call through to require if no confinement is found', () => {
             const mockReturn = Math.random().toString(36);
             requireMock.mockReturnValue(mockReturn);
             const returnValue = NodeModule.prototype.require.call(module, 'my-test-module');
@@ -49,7 +50,7 @@ describe('require', () => {
             expect(utils.isAllowedToCall).not.toHaveBeenCalled();
         });
 
-        test('require should evaluate the confinement if found by calling isAllowedToCall with it', () => {
+        test('It should evaluate the confinement if found by calling isAllowedToCall with it', () => {
             const confinement = {};
             module[confinementSymbol] = confinement;
             const moduleName = 'my-test-module';
@@ -60,7 +61,7 @@ describe('require', () => {
             expect(utils.isAllowedToCall).toHaveBeenCalledWith(confinement, moduleName);
         });
 
-        test('require should throw an error if the confinement forbids loading the module', () => {
+        test('It should throw an error if the confinement forbids loading the module', () => {
             const confinement = {};
             module[confinementSymbol] = confinement;
             const moduleName = 'my-test-module';

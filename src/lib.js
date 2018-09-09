@@ -18,9 +18,15 @@ function installGeneralConfinement(aConfinementConfiguration) {
     const confinementDefinition = Object.freeze(new ModuleConfinement(aConfinementConfiguration));
     NodeModule.prototype.require = new Proxy(NodeModule.prototype.require, {
         apply(aTarget, aThisContext, aArgumentsList) {
+            // first we execute the actual function. If this errors, we don't want to do anything further
             const newModule = Reflect.apply(aTarget, aThisContext, aArgumentsList);
+            // but if we reach here, we generate the module file key, which is used in the module cache
+            const newModuleFileKey = NodeModule._resolveFilename(aTarget, aThisContext, false);
+            // then we select the real module instance from the module cache
+            const newModuleInstance = NodeModule._cache[newModuleFileKey];
 
-            Object.defineProperty(newModule, confinementDefinitionSymbol, {
+            // then we define the property on the real module instance
+            Object.defineProperty(newModuleInstance, confinementDefinitionSymbol, {
                 value: confinementDefinition,
             });
 

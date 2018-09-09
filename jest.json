@@ -2,6 +2,8 @@
     "automock": false,
     "browser": false,
     "bail": true,
+    "collectCoverage": true,
+    "errorOnDeprecated": true,
     "roots": ["test"],
     "testEnvironment": "node",
     "testMatch": ["**/*.spec.js"]

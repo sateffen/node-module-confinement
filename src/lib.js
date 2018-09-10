@@ -21,7 +21,7 @@ function installGeneralConfinement(aConfinementConfiguration) {
             // first we execute the actual function. If this errors, we don't want to do anything further
             const newModule = Reflect.apply(aTarget, aThisContext, aArgumentsList);
             // but if we reach here, we generate the module file key, which is used in the module cache
-            const newModuleFileKey = NodeModule._resolveFilename(aTarget, aThisContext, false);
+            const newModuleFileKey = NodeModule._resolveFilename(aArgumentsList[0], aThisContext, false);
             // then we select the real module instance from the module cache
             const newModuleInstance = NodeModule._cache[newModuleFileKey];
 

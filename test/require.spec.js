@@ -73,5 +73,27 @@ describe('require', () => {
 
             expect(callRequire).toThrow();
         });
+
+        test('It should evaluate the confinement found in the starting up modules map by calling isAllowedToCall with it', () => {
+            const confinement = {};
+            futureConfinedModulesMap.set(module.id, confinement);
+            const moduleName = 'my-test-module';
+            utils.isAllowedToCall.mockReturnValue(true);
+
+            NodeModule.prototype.require.call(module, moduleName);
+
+            expect(utils.isAllowedToCall).toHaveBeenCalledWith(confinement, moduleName);
+        });
+
+        test('It should throw an error if the confinement found in the starting up modules map forbids loading the module', () => {
+            const confinement = {};
+            futureConfinedModulesMap.set(module.id, confinement);
+            const moduleName = 'my-test-module';
+            utils.isAllowedToCall.mockReturnValue(false);
+
+            const callRequire = () => NodeModule.prototype.require.call(module, moduleName);
+
+            expect(callRequire).toThrow();
+        });
     });
 });

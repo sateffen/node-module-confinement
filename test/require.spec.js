@@ -15,13 +15,13 @@ describe('require', () => {
         });
 
         test('It should not throw', () => {
-            const functionToTest = (confinementSymbol) => patchRequire(confinementSymbol);
+            const functionToTest = (confinementSymbol) => patchRequire(confinementSymbol, new Map());
 
             expect(functionToTest).not.toThrow();
         });
 
         test('It should override the require method with a new one', () => {
-            patchRequire(confinementSymbol);
+            patchRequire(confinementSymbol, new Map());
 
             expect(NodeModule.prototype.require).not.toBe(originalRequire);
         });
@@ -29,12 +29,14 @@ describe('require', () => {
 
     describe('patchRequire patched require version', () => {
         let requireMock = null;
+        let futureConfinedModulesMap = null;
 
         beforeEach(() => {
+            futureConfinedModulesMap = new Map();
             module[confinementSymbol] = undefined;
             requireMock = jest.fn();
             NodeModule.prototype.require = requireMock;
-            patchRequire(confinementSymbol);
+            patchRequire(confinementSymbol, futureConfinedModulesMap);
         });
 
         afterEach(() => {

@@ -3,6 +3,7 @@ const ModuleConfinement = require('./moduleconfinement');
 const {patchRequire} = require('./require');
 
 const confinementDefinitionSymbol = Symbol('node-module-confinement');
+const modulesInConfinedStartUp = new Map();
 let generalConfinementInstalled = false;
 
 /**
@@ -18,13 +19,16 @@ function installGeneralConfinement(aConfinementConfiguration) {
     const confinementDefinition = Object.freeze(new ModuleConfinement(aConfinementConfiguration));
     NodeModule.prototype.require = new Proxy(NodeModule.prototype.require, {
         apply(aTarget, aThisContext, aArgumentsList) {
-            const newModuleKey = aArgumentsList[0];
-            // first we execute the actual function. If this errors, we don't want to do anything further
-            const newModule = Reflect.apply(aTarget, aThisContext, aArgumentsList);
+            const isInternalModule = NodeModule.builtinModules.includes(aArgumentsList[0]);
+            // but if we reach here, we generate the module file key, which is used in the module cache
+            const newModuleFileKey = NodeModule._resolveFilename(aArgumentsList[0], aThisContext, false);
+            let newModule = null;
 
-            if (!NodeModule.builtinModules.includes(newModuleKey)) {
-                // but if we reach here, we generate the module file key, which is used in the module cache
-                const newModuleFileKey = NodeModule._resolveFilename(newModuleKey, aThisContext, false);           
+            if (!isInternalModule) {
+                modulesInConfinedStartUp.set(newModuleFileKey, confinementDefinition);
+
+                newModule = Reflect.apply(aTarget, aThisContext, aArgumentsList);
+
                 // then we select the real module instance from the module cache
                 const newModuleInstance = NodeModule._cache[newModuleFileKey];
 
@@ -32,6 +36,11 @@ function installGeneralConfinement(aConfinementConfiguration) {
                 Object.defineProperty(newModuleInstance, confinementDefinitionSymbol, {
                     value: confinementDefinition,
                 });
+
+                modulesInConfinedStartUp.delete(newModuleFileKey);
+            }
+            else {
+                newModule = Reflect.apply(aTarget, aThisContext, aArgumentsList);
             }
 
             return newModule;
@@ -84,7 +93,7 @@ function patchConfinedRequire() {
     };
 }
 
-patchRequire(confinementDefinitionSymbol);
+patchRequire(confinementDefinitionSymbol, modulesInConfinedStartUp);
 
 module.exports = {
     installGeneralConfinement,

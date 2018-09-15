@@ -18,17 +18,21 @@ function installGeneralConfinement(aConfinementConfiguration) {
     const confinementDefinition = Object.freeze(new ModuleConfinement(aConfinementConfiguration));
     NodeModule.prototype.require = new Proxy(NodeModule.prototype.require, {
         apply(aTarget, aThisContext, aArgumentsList) {
+            const newModuleKey = aArgumentsList[0];
             // first we execute the actual function. If this errors, we don't want to do anything further
             const newModule = Reflect.apply(aTarget, aThisContext, aArgumentsList);
-            // but if we reach here, we generate the module file key, which is used in the module cache
-            const newModuleFileKey = NodeModule._resolveFilename(aArgumentsList[0], aThisContext, false);
-            // then we select the real module instance from the module cache
-            const newModuleInstance = NodeModule._cache[newModuleFileKey];
 
-            // then we define the property on the real module instance
-            Object.defineProperty(newModuleInstance, confinementDefinitionSymbol, {
-                value: confinementDefinition,
-            });
+            if (!NodeModule.builtinModules.includes(newModuleKey)) {
+                // but if we reach here, we generate the module file key, which is used in the module cache
+                const newModuleFileKey = NodeModule._resolveFilename(newModuleKey, aThisContext, false);           
+                // then we select the real module instance from the module cache
+                const newModuleInstance = NodeModule._cache[newModuleFileKey];
+
+                // then we define the property on the real module instance
+                Object.defineProperty(newModuleInstance, confinementDefinitionSymbol, {
+                    value: confinementDefinition,
+                });
+            }
 
             return newModule;
         },
@@ -39,12 +43,17 @@ function installGeneralConfinement(aConfinementConfiguration) {
  * Patches the general module prototype with the *confinedRequire* method
  */
 function patchConfinedRequire() {
-    NodeModule.prototype.confinedRequire = function loadConfinedModule(aPath, aConfinementConfiguration) {
+    NodeModule.prototype.confinedRequire = function loadConfinedModule(aModulePath, aConfinementConfiguration) {
+        // if the module is a build it, we can't do anything but delegate it to the original require function
+        if (NodeModule.builtinModules.includes(aModulePath)) {
+            NodeModule.prototype.require.call(this, aModulePath);
+        }
+
         // first determine the file to lad
-        const fileToLoad = NodeModule._resolveFilename(aPath, this, false);
+        const fileToLoad = NodeModule._resolveFilename(aModulePath, this, false);
 
         // and than instanciate the file
-        const newModuleInstance = new NodeModule(aPath, this);
+        const newModuleInstance = new NodeModule(aModulePath, this);
 
         Object.defineProperty(newModuleInstance, confinementDefinitionSymbol, {
             value: Object.freeze(new ModuleConfinement(aConfinementConfiguration)),

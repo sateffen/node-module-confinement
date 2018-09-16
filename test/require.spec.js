@@ -28,13 +28,13 @@ describe('require', () => {
     });
 
     describe('patchRequire patched require version', () => {
-        let requireMock = null;
-        let futureConfinedModulesMap = null;
+        const requireMock = jest.fn();
+        const futureConfinedModulesMap = new Map();
 
         beforeEach(() => {
-            futureConfinedModulesMap = new Map();
+            futureConfinedModulesMap.clear();
+            requireMock.mockReset();
             module[confinementSymbol] = undefined;
-            requireMock = jest.fn();
             NodeModule.prototype.require = requireMock;
             patchRequire(confinementSymbol, futureConfinedModulesMap);
         });

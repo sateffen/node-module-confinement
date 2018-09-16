@@ -59,7 +59,11 @@ to be loaded.
     whiteList: ['fs', 'path']
 }
 ```
-All properties are optional.
+All properties are optional, but all modules in black- and whitelist will get resolved. That means, that blacklisting
+lodash will blacklist the lodash module entirely, even if you require `node_modules/lodash`. If you pass relative modules
+like `./othermodule`, it'll resolve that one and prevents even completely differnt names, that resolve to the same file.
+
+That said: If a module can't get resolved this will lead to an error - just like when requiring it.
 
 ### installGeneralConfinement(confinement)
 
@@ -113,3 +117,8 @@ nodeModuleConfinement.patchConfinedRequire();
 // node internal modules
 const confinedLodash = module.confinedRequire('lodash', {allowInternalModules: false});
 ```
+
+## caveats
+
+This module integrates deeply in node by providing a proxy for the `require` method. There shouldn't be any
+difference, except an error when something not allowed is happening.

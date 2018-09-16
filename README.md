@@ -11,6 +11,9 @@ know or don't trust, like packages from npm or plugins for your software.
 If anything defies the confinement, an error is thrown to prevent anything bad from happening. The error tells
 you which confinement was defied, and which module did this.
 
+This module integrates deeply in node by providing a proxy for the `require` method. There shouldn't be any
+difference, except an error when something not allowed is happening.
+
 ## API
 
 ### require
@@ -117,8 +120,3 @@ nodeModuleConfinement.patchConfinedRequire();
 // node internal modules
 const confinedLodash = module.confinedRequire('lodash', {allowInternalModules: false});
 ```
-
-## caveats
-
-This module integrates deeply in node by providing a proxy for the `require` method. There shouldn't be any
-difference, except an error when something not allowed is happening.

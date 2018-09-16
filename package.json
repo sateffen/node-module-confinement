@@ -8,8 +8,8 @@
     "test:watch": "jest --config=jest.json --watch"
   },
   "devDependencies": {
-    "eslint": "~5.5.0",
+    "eslint": "~5.6.0",
     "eslint-config-google": "~0.10.0",
-    "jest": "~23.5.0"
+    "jest": "~23.6.0"
   }
 }

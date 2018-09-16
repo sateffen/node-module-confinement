@@ -1,11 +1,12 @@
 jest.mock('../src/utils');
 
 const NodeModule = require('module');
-const {patchRequire} = require('../src/require');
+const {patchRequire, confinedRequire} = require('../src/require');
 
 const utils = require('../src/utils');
 
 const originalRequire = NodeModule.prototype.require;
+const originalNodeModuleResolveFilename = NodeModule._resolveFilename;
 const confinementSymbol = Symbol('confinement-test-symbol');
 
 describe('require', () => {
@@ -94,6 +95,109 @@ describe('require', () => {
             const callRequire = () => NodeModule.prototype.require.call(module, moduleName);
 
             expect(callRequire).toThrow();
+        });
+    });
+
+    describe('confinedRequire', () => {
+        const futureConfinedModulesMap = new Map();
+        const futureConfinedModulesMapSetSpy = jest.spyOn(futureConfinedModulesMap, 'set');
+        const futureConfinedModulesMapDeleteSpy = jest.spyOn(futureConfinedModulesMap, 'delete');
+        const boundConfinedRequire = confinedRequire.bind(null, confinementSymbol, futureConfinedModulesMap);
+        const requireFunction = {call: jest.fn()};
+
+        beforeEach(() => {
+            futureConfinedModulesMap.clear();
+            requireFunction.call.mockReset();
+            futureConfinedModulesMapSetSpy.mockReset();
+            futureConfinedModulesMapDeleteSpy.mockReset();
+            NodeModule._resolveFilename = jest.fn();
+            NodeModule._resolveFilename.mockReturnValue('');
+            NodeModule._cache[''] = {};
+        });
+
+        afterEach(() => {
+            NodeModule._resolveFilename = originalNodeModuleResolveFilename;
+            NodeModule._cache[''] = undefined;
+        });
+
+        test('It should call require directly when passing an internal module', () => {
+            boundConfinedRequire(requireFunction, {}, 'fs', {});
+
+            expect(requireFunction.call).toHaveBeenCalledTimes(1);
+        });
+
+        test('It should return the return value of require for internal modules', () => {
+            const moduleInstance = {myModule: true};
+            requireFunction.call.mockReturnValue(moduleInstance);
+
+            const returnValue = boundConfinedRequire(requireFunction, {}, 'fs', {});
+
+            expect(returnValue).toBe(moduleInstance);
+        });
+
+        test('It should pass the correct this-context and module-name to require function', () => {
+            const thisContext = {thisContext: true};
+            const moduleName = 'fs';
+
+            boundConfinedRequire(requireFunction, thisContext, 'fs', {});
+
+            expect(requireFunction.call).toHaveBeenCalledWith(thisContext, moduleName);
+        });
+
+        test('It should resolve the filename with the NodeModule method', () => {
+            const resolvedFilename = Math.random().toString(36);
+            const moduleName = Math.random().toString(36);
+            const thisContext = {};
+            NodeModule._resolveFilename.mockReturnValue(resolvedFilename);
+            NodeModule._cache[resolvedFilename] = {};
+
+            boundConfinedRequire(requireFunction, thisContext, moduleName, {});
+
+            expect(NodeModule._resolveFilename).toHaveBeenCalledTimes(1);
+            expect(NodeModule._resolveFilename).toHaveBeenCalledWith(moduleName, thisContext, false);
+
+            NodeModule._cache[resolvedFilename] = undefined;
+        });
+
+        test('It should set the confinement to the startup map for external modules', () => {
+            const resolvedFilename = 'module-to-set';
+            const thisContext = {};
+            const confinement = {confinement: true};
+            NodeModule._resolveFilename.mockReturnValue(resolvedFilename);
+            NodeModule._cache[resolvedFilename] = {};
+
+            boundConfinedRequire(requireFunction, thisContext, 'test', confinement);
+
+            expect(futureConfinedModulesMapSetSpy).toHaveBeenCalledTimes(1);
+            expect(futureConfinedModulesMapSetSpy).toHaveBeenCalledWith(resolvedFilename, confinement);
+
+            NodeModule._cache[resolvedFilename] = undefined;
+        });
+
+        test('It should delete the confinement to the startup map for external modules to clean up', () => {
+            const resolvedFilename = 'module-to-delete';
+            NodeModule._resolveFilename.mockReturnValue(resolvedFilename);
+            NodeModule._cache[resolvedFilename] = {};
+
+            boundConfinedRequire(requireFunction, {}, 'test', {});
+
+            expect(futureConfinedModulesMapDeleteSpy).toHaveBeenCalledTimes(1);
+            expect(futureConfinedModulesMapDeleteSpy).toHaveBeenCalledWith(resolvedFilename);
+
+            NodeModule._cache[resolvedFilename] = undefined;
+        });
+
+        test('It should add the confinementdefinition to the module instance in cache', () => {
+            const resolvedFilename = 'module-to-patch';
+            const confinement = {confinement: true};
+            NodeModule._resolveFilename.mockReturnValue(resolvedFilename);
+            NodeModule._cache[resolvedFilename] = {};
+
+            boundConfinedRequire(requireFunction, {}, 'test', confinement);
+
+            expect(NodeModule._cache[resolvedFilename][confinementSymbol]).toBe(confinement);
+
+            NodeModule._cache[resolvedFilename] = undefined;
         });
     });
 });

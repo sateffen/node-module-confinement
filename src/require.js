@@ -40,7 +40,7 @@ function patchRequire(aConfinementSymbol, aModulesInStartUpMap) {
 }
 
 /**
- * Loads given module with require, but confined
+ * Loads given module with require, but confined. Can't confine internal modules
  * @param {Symbol} aConfinementDefinitionSymbol The confinement definition symbol
  * @param {Map<string, ModuleConfinement>} aModulesInConfinedStartUp The modules in startup confinement map
  * @param {Function} aRequireFunction The require function to call when calling the native require

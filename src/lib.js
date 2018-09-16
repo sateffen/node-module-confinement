@@ -1,5 +1,4 @@
 const NodeModule = require('module');
-const ModuleConfinement = require('./moduleconfinement');
 const {patchRequire, confinedRequire} = require('./require');
 
 const confinementDefinitionSymbol = Symbol('node-module-confinement');
@@ -18,7 +17,6 @@ function installGeneralConfinement(aConfinementConfiguration) {
     }
 
     generalConfinementInstalled = true;
-    const confinementDefinition = Object.freeze(new ModuleConfinement(aConfinementConfiguration));
     NodeModule.prototype.require = new Proxy(NodeModule.prototype.require, {
         apply(aTarget, aThisContext, aArgumentsList) {
             /**
@@ -30,7 +28,7 @@ function installGeneralConfinement(aConfinementConfiguration) {
                 return Reflect.apply(aTarget, aThisContext, [aModulePath]);
             }
 
-            return boundConfinedRequire(proxyRequire, aThisContext, aArgumentsList[0], confinementDefinition);
+            return boundConfinedRequire(proxyRequire, aThisContext, aArgumentsList[0], aConfinementConfiguration);
         },
     });
 }

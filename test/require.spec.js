@@ -3,6 +3,7 @@ jest.mock('../src/utils');
 const NodeModule = require('module');
 const {patchRequire, confinedRequire} = require('../src/require');
 
+const ModuleConfinement = require('../src/moduleconfinement');
 const utils = require('../src/utils');
 
 const originalRequire = NodeModule.prototype.require;
@@ -47,7 +48,7 @@ describe('require', () => {
         test('It should call through to require if no confinement is found', () => {
             const mockReturn = Math.random().toString(36);
             requireMock.mockReturnValue(mockReturn);
-            const returnValue = NodeModule.prototype.require.call(module, 'my-test-module');
+            const returnValue = NodeModule.prototype.require.call(module, 'jest');
 
             expect(returnValue).toBe(mockReturn);
             expect(utils.isAllowedToCall).not.toHaveBeenCalled();
@@ -56,18 +57,19 @@ describe('require', () => {
         test('It should evaluate the confinement if found by calling isAllowedToCall with it', () => {
             const confinement = {};
             module[confinementSymbol] = confinement;
-            const moduleName = 'my-test-module';
+            const moduleName = 'jest';
+            const resolvedFilename = NodeModule._resolveFilename(moduleName, module, false);
             utils.isAllowedToCall.mockReturnValue(true);
 
             NodeModule.prototype.require.call(module, moduleName);
 
-            expect(utils.isAllowedToCall).toHaveBeenCalledWith(confinement, moduleName);
+            expect(utils.isAllowedToCall).toHaveBeenCalledWith(confinement, resolvedFilename);
         });
 
         test('It should throw an error if the confinement forbids loading the module', () => {
             const confinement = {};
             module[confinementSymbol] = confinement;
-            const moduleName = 'my-test-module';
+            const moduleName = 'jest';
             utils.isAllowedToCall.mockReturnValue(false);
 
             const callRequire = () => NodeModule.prototype.require.call(module, moduleName);
@@ -78,18 +80,19 @@ describe('require', () => {
         test('It should evaluate the confinement found in the starting up modules map by calling isAllowedToCall with it', () => {
             const confinement = {};
             futureConfinedModulesMap.set(module.id, confinement);
-            const moduleName = 'my-test-module';
+            const moduleName = 'jest';
+            const resolvedFilename = NodeModule._resolveFilename(moduleName, module, false);
             utils.isAllowedToCall.mockReturnValue(true);
 
             NodeModule.prototype.require.call(module, moduleName);
 
-            expect(utils.isAllowedToCall).toHaveBeenCalledWith(confinement, moduleName);
+            expect(utils.isAllowedToCall).toHaveBeenCalledWith(confinement, resolvedFilename);
         });
 
         test('It should throw an error if the confinement found in the starting up modules map forbids loading the module', () => {
             const confinement = {};
             futureConfinedModulesMap.set(module.id, confinement);
-            const moduleName = 'my-test-module';
+            const moduleName = 'jest';
             utils.isAllowedToCall.mockReturnValue(false);
 
             const callRequire = () => NodeModule.prototype.require.call(module, moduleName);
@@ -162,14 +165,15 @@ describe('require', () => {
         test('It should set the confinement to the startup map for external modules', () => {
             const resolvedFilename = 'module-to-set';
             const thisContext = {};
-            const confinement = {confinement: true};
+            const confinement = {allowInternalModules: true};
+            const resultingModuleConfinement = new ModuleConfinement(confinement, module);
             NodeModule._resolveFilename.mockReturnValue(resolvedFilename);
             NodeModule._cache[resolvedFilename] = {};
 
             boundConfinedRequire(requireFunction, thisContext, 'test', confinement);
 
             expect(futureConfinedModulesMapSetSpy).toHaveBeenCalledTimes(1);
-            expect(futureConfinedModulesMapSetSpy).toHaveBeenCalledWith(resolvedFilename, confinement);
+            expect(futureConfinedModulesMapSetSpy).toHaveBeenCalledWith(resolvedFilename, expect.objectContaining(resultingModuleConfinement));
 
             NodeModule._cache[resolvedFilename] = undefined;
         });
@@ -189,13 +193,14 @@ describe('require', () => {
 
         test('It should add the confinementdefinition to the module instance in cache', () => {
             const resolvedFilename = 'module-to-patch';
-            const confinement = {confinement: true};
+            const confinement = {allowInternalModules: true};
+            const resultingModuleConfinement = new ModuleConfinement(confinement, module);
             NodeModule._resolveFilename.mockReturnValue(resolvedFilename);
             NodeModule._cache[resolvedFilename] = {};
 
             boundConfinedRequire(requireFunction, {}, 'test', confinement);
 
-            expect(NodeModule._cache[resolvedFilename][confinementSymbol]).toBe(confinement);
+            expect(NodeModule._cache[resolvedFilename][confinementSymbol]).toEqual(resultingModuleConfinement);
 
             NodeModule._cache[resolvedFilename] = undefined;
         });

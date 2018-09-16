@@ -1,5 +1,6 @@
 const NodeModule = require('module');
 const {isAllowedToCall} = require('./utils');
+const ModuleConfinement = require('./moduleconfinement');
 
 /**
  * Patches the require function with a confinement checking one
@@ -9,7 +10,7 @@ const {isAllowedToCall} = require('./utils');
 function patchRequire(aConfinementSymbol, aModulesInStartUpMap) {
     NodeModule.prototype.require = new Proxy(NodeModule.prototype.require, {
         apply(aTarget, aThisContext, aArgumentsList) {
-            const moduleToLoad = aArgumentsList[0];
+            const moduleToLoad = NodeModule._resolveFilename(aArgumentsList[0], aThisContext, false);
             let confinementDefinition = null;
             let confinementDefinitionSource = null;
 
@@ -31,7 +32,7 @@ function patchRequire(aConfinementSymbol, aModulesInStartUpMap) {
             }
 
             if (confinementDefinition && !isAllowedToCall(confinementDefinition, moduleToLoad)) {
-                throw new Error(`Module with id "${aThisContext.id}" wants to load forbidden module ${moduleToLoad} (confined by module: ${confinementDefinitionSource})`);
+                throw new Error(`Module with id "${aThisContext.id}" wants to load forbidden module ${aArgumentsList[0]} (confined by module: ${confinementDefinitionSource})`);
             }
 
             return Reflect.apply(aTarget, aThisContext, aArgumentsList);
@@ -58,8 +59,9 @@ function confinedRequire(aConfinementDefinitionSymbol, aModulesInConfinedStartUp
     }
     else {
         const newModuleFileKey = NodeModule._resolveFilename(aModuleToLoad, aThisContext, false);
+        const confinementDefinition = Object.freeze(new ModuleConfinement(aConfinementDefinition, aThisContext));
 
-        aModulesInConfinedStartUp.set(newModuleFileKey, aConfinementDefinition);
+        aModulesInConfinedStartUp.set(newModuleFileKey, confinementDefinition);
 
         newModule = aRequireFunction.call(aThisContext, aModuleToLoad);
 
@@ -68,7 +70,7 @@ function confinedRequire(aConfinementDefinitionSymbol, aModulesInConfinedStartUp
 
         // then we define the property on the real module instance
         Object.defineProperty(newModuleInstance, aConfinementDefinitionSymbol, {
-            value: aConfinementDefinition,
+            value: confinementDefinition,
         });
 
         aModulesInConfinedStartUp.delete(newModuleFileKey);

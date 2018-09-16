@@ -30,6 +30,13 @@ describe('Integration tests', () => {
                 done();
             });
         });
+
+        test('It should fail for blacklisted modules', (done) => {
+            childProcess.execFile('node', [path.join(__dirname, 'integration/globalconfinement/failrelativemodulebyblacklist.js')], (aError) => {
+                expect(aError).not.toBeNull();
+                done();
+            });
+        });
     });
 
     describe('Local confinement', () => {
@@ -56,6 +63,13 @@ describe('Integration tests', () => {
 
         test('It should throw an error blocking internal nodules by policy', (done) => {
             childProcess.execFile('node', [path.join(__dirname, 'integration/localconfinements/failinternalmodulebypolicy.js')], (aError) => {
+                expect(aError).not.toBeNull();
+                done();
+            });
+        });
+
+        test('It should fail for blacklisted modules', (done) => {
+            childProcess.execFile('node', [path.join(__dirname, 'integration/localconfinements/failrelativemodulebyblacklist.js')], (aError) => {
                 expect(aError).not.toBeNull();
                 done();
             });

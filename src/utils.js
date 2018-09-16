@@ -7,9 +7,13 @@ const NodeModule = require('module');
  * @return {boolean}
  */
 function isAllowedToCall(aConfinement, aModule) {
+    const notBlackListed = !aConfinement.blackList.includes(aModule);
+    const isBuiltInModule = NodeModule.builtinModules.includes(aModule);
+
     return aConfinement.whiteList.includes(aModule) ||
-        !aConfinement.blackList.includes(aModule) &&
-        aConfinement.allowInternalModules && NodeModule.builtinModules.includes(aModule);
+        aConfinement.allowInternalModules && isBuiltInModule && notBlackListed ||
+        aConfinement.allowInternalModules && !isBuiltInModule && notBlackListed ||
+        !aConfinement.allowInternalModules && !isBuiltInModule && notBlackListed;
 }
 
 module.exports = {

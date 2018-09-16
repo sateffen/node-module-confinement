@@ -1,3 +1,4 @@
+const NodeModule = require('module');
 const ModuleConfinement = require('../src/moduleconfinement');
 
 describe('ModuleConfinement', () => {
@@ -33,22 +34,24 @@ describe('ModuleConfinement', () => {
 
     test('The constructor should evaluate the initial value for "allowInternalModules" correctly', () => {
         const config = {allowInternalModules: true};
-        const instance = new ModuleConfinement(config);
+        const instance = new ModuleConfinement(config, module);
 
         expect(instance.allowInternalModules).toBe(config.allowInternalModules);
     });
 
     test('The constructor should evaluate the initial value for "blackList" correctly', () => {
-        const config = {blackList: ['test']};
-        const instance = new ModuleConfinement(config);
+        const config = {blackList: ['jest']};
+        const instance = new ModuleConfinement(config, module);
+        const correctBlackList = [NodeModule._resolveFilename('jest', module, false)];
 
-        expect(instance.blackList).toBe(config.blackList);
+        expect(instance.blackList).toEqual(correctBlackList);
     });
 
     test('The constructor should evaluate the initial value for "whiteList" correctly', () => {
-        const config = {whiteList: ['test']};
-        const instance = new ModuleConfinement(config);
+        const config = {whiteList: ['jest']};
+        const instance = new ModuleConfinement(config, module);
+        const correctWhiteList = [NodeModule._resolveFilename('jest', module, false)];
 
-        expect(instance.whiteList).toBe(config.whiteList);
+        expect(instance.whiteList).toEqual(correctWhiteList);
     });
 });

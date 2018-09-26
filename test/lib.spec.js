@@ -1,70 +1,39 @@
-jest.mock('../src/require');
+jest.mock('../src/setup');
+const setup = require('../src/setup');
 
-const NodeModule = require('module');
-const lib = require('../src/lib');
-const {patchRequire, confinedRequire} = require('../src/require');
-
-const originalRequire = NodeModule.prototype.require;
+const configure = require('../src/lib');
 
 describe('lib', () => {
-    test('it should patch the global require imediatly', () => {
-        expect(patchRequire).toHaveBeenCalledTimes(1);
+    const generalConfinement = {};
+    const patchWithConfinedRequire = true;
+    const useRecursiveConfinement = true;
+    const resultingConfiguration = {
+        generalConfinement,
+        patchWithConfinedRequire,
+        useRecursiveConfinement,
+    };
+
+    beforeAll(() => {
+        configure(resultingConfiguration);
     });
 
-    describe('lib.installGeneralConfinement', () => {
-        const requireBeforeManipulating = NodeModule.prototype.require;
+    test('It should throw an error calling configure a second time', () => {
+        const testFunction = () => configure(resultingConfiguration);
 
-        beforeAll(() => {
-            lib.installGeneralConfinement({});
-        });
-
-        afterAll(() => {
-            NodeModule.prototype.require = originalRequire;
-        });
-
-        beforeEach(() => {
-            confinedRequire.mockReset();
-        });
-
-        test('It should throw an error calling installGeneralConfinement twice', () => {
-            const testFunction = () => {
-                lib.installGeneralConfinement({});
-            };
-
-            expect(testFunction).toThrowError();
-        });
-
-        test('It should overwrite the original require method', () => {
-            expect(NodeModule.prototype.require).not.toBe(requireBeforeManipulating);
-        });
-
-        test('It should call through to confinedRequire in replaced require function', () => {
-            NodeModule.prototype.require.call(module, 'test');
-
-            expect(confinedRequire).toHaveBeenCalledTimes(1);
-            expect(confinedRequire).toHaveBeenCalledWith(expect.anything(), expect.any(Map), expect.any(Function), expect.any(Object), expect.any(String), expect.any(Object));
-        });
+        expect(testFunction).toThrow();
     });
 
-    describe('lib.patchConfinedRequire', () => {
-        beforeEach(() => {
-            confinedRequire.mockReset();
-        });
+    test('It should call setup.installGeneralConfinement with the passed general confinement', () => {
+        expect(setup.installGeneralConfinement).toHaveBeenCalledTimes(1);
+        expect(setup.installGeneralConfinement).toHaveBeenCalledWith(generalConfinement);
+    });
 
-        test('It should add a "confinedRequire" method to NodeModule.prototype', () => {
-            expect(NodeModule.prototype.confinedRequire).toBeUndefined();
+    test('It should call setup.patchConfinedRequire', () => {
+        expect(setup.patchConfinedRequire).toHaveBeenCalledTimes(1);
+    });
 
-            lib.patchConfinedRequire();
-
-            expect(NodeModule.prototype.confinedRequire).toBeDefined();
-            expect(NodeModule.prototype.confinedRequire).toBeInstanceOf(Function);
-        });
-
-        test('It should call through to confinedRequire in NodeModule.prototype.confinedRequire function', () => {
-            NodeModule.prototype.confinedRequire.call(module, 'test', {});
-
-            expect(confinedRequire).toHaveBeenCalledTimes(1);
-            expect(confinedRequire).toHaveBeenCalledWith(expect.anything(), expect.any(Map), expect.any(Function), expect.any(Object), expect.any(String), expect.any(Object));
-        });
+    test('It should call setup.init with the passed configuration', () => {
+        expect(setup.init).toHaveBeenCalledTimes(1);
+        expect(setup.init).toHaveBeenCalledWith(resultingConfiguration);
     });
 });

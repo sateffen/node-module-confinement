@@ -47,6 +47,20 @@ describe('Integration tests', () => {
             });
         });
 
+        test('It should allow module loading if no parent confinements should get evaluated', (done) => {
+            childProcess.execFile('node', [path.join(__dirname, 'integration/localconfinements/allowallowedinternalmodulebytree.js')], (aError) => {
+                expect(aError).toBeNull();
+                done();
+            });
+        });
+
+        test('It should throw an error when violating a parent confinement in a confinement tree', (done) => {
+            childProcess.execFile('node', [path.join(__dirname, 'integration/localconfinements/failallowedinternalmodulebytree.js')], (aError) => {
+                expect(aError).not.toBeNull();
+                done();
+            });
+        });
+
         test('It should throw an error blocking external nodules by blacklist', (done) => {
             childProcess.execFile('node', [path.join(__dirname, 'integration/localconfinements/failexternalmodulebyplacklist.js')], (aError) => {
                 expect(aError).not.toBeNull();

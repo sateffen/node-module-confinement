@@ -4,8 +4,8 @@ configure({
     patchWithConfinedRequire: true,
 });
 
-module.confinedRequire('../loadfs', {
-    allowInternalModules: true,
-    blackList: ['fs'],
+module.confinedRequire('./allowinternalmodulebywhitelist', {
+    allowInternalModules: false,
+    blackList: [],
     whiteList: [],
 });

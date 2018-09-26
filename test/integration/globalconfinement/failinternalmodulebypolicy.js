@@ -1,9 +1,11 @@
-const {installGeneralConfinement} = require('../../../');
+const configure = require('../../../');
 
-installGeneralConfinement({
-    allowInternalModules: false,
-    blackList: [],
-    whiteList: [],
+configure({
+    generalConfinement: {
+        allowInternalModules: false,
+        blackList: [],
+        whiteList: [],
+    },
 });
 
 require('../loadfs');

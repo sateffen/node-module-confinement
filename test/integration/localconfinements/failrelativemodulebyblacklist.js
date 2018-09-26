@@ -1,6 +1,8 @@
-const {patchConfinedRequire} = require('../../../src/lib');
+const configure = require('../../../');
 
-patchConfinedRequire();
+configure({
+    patchWithConfinedRequire: true,
+});
 
 module.confinedRequire('../loadloadfs', {
     allowInternalModules: true,

@@ -2,9 +2,10 @@ const configure = require('../../../');
 
 configure({
     patchWithConfinedRequire: true,
+    useRecursiveConfinement: false,
 });
 
-module.confinedRequire('../loadfs', {
+module.confinedRequire('./allowinternalmodulebywhitelist', {
     allowInternalModules: false,
     blackList: [],
     whiteList: [],

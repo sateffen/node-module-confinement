@@ -1,50 +1,37 @@
-const NodeModule = require('module');
-const {patchRequire, confinedRequire} = require('./require');
+const {init, installGeneralConfinement, patchConfinedRequire} = require('./setup');
 
-const confinementDefinitionSymbol = Symbol('node-module-confinement');
-const modulesInConfinedStartUp = new Map();
-let generalConfinementInstalled = false;
-
-const boundConfinedRequire = confinedRequire.bind(null, confinementDefinitionSymbol, modulesInConfinedStartUp);
+let nodeModuleConfinementIsConfigured = false;
 
 /**
- * Installs a proxy for loading all node-modules in confinements
- * @param {Object} aConfinementConfiguration
+ * typedef {Object} NodeModuleConfinementConfiguration
+ * @property {Object} generalConfinement
+ * @property {boolean} patchWithConfinedRequire
+ * @property {boolean} useRecursiveConfinement
  */
-function installGeneralConfinement(aConfinementConfiguration) {
-    if (generalConfinementInstalled) {
-        throw new Error('General confinement already installed, cannot install twice');
+
+/**
+ * Configures the node-module-confinement
+ * @param {NodeModuleConfinementConfiguration} aConfiguration The node-module-confinement configuration
+ */
+function configure(aConfiguration) {
+    if (nodeModuleConfinementIsConfigured) {
+        throw new Error('node-module-confinement is already configured, tried to configure it a second time');
     }
 
-    generalConfinementInstalled = true;
-    NodeModule.prototype.require = new Proxy(NodeModule.prototype.require, {
-        apply(aTarget, aThisContext, aArgumentsList) {
-            /**
-             * A proxy require function, that is used to execute the native require
-             * @param {string} aModulePath The module path to load
-             * @return {any} The resulting module
-             */
-            function proxyRequire(aModulePath) {
-                return Reflect.apply(aTarget, aThisContext, [aModulePath]);
-            }
+    if (!aConfiguration || typeof aConfiguration !== 'object') {
+        throw new TypeError('node-module-confinement needs an object as configuration');
+    }
 
-            return boundConfinedRequire(proxyRequire, aThisContext, aArgumentsList[0], aConfinementConfiguration);
-        },
-    });
+    if (aConfiguration.generalConfinement) {
+        installGeneralConfinement(aConfiguration.generalConfinement);
+    }
+
+    if (aConfiguration.patchWithConfinedRequire) {
+        patchConfinedRequire();
+    }
+
+    init(aConfiguration);
+    nodeModuleConfinementIsConfigured = true;
 }
 
-/**
- * Patches the general module prototype with the *confinedRequire* method
- */
-function patchConfinedRequire() {
-    NodeModule.prototype.confinedRequire = function loadConfinedModule(aModulePath, aConfinementConfiguration) {
-        return boundConfinedRequire(NodeModule.prototype.require, this, aModulePath, aConfinementConfiguration);
-    };
-}
-
-patchRequire(confinementDefinitionSymbol, modulesInConfinedStartUp);
-
-module.exports = {
-    installGeneralConfinement,
-    patchConfinedRequire,
-};
+module.exports = configure;

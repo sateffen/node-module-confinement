@@ -11,34 +11,18 @@ const originalNodeModuleResolveFilename = NodeModule._resolveFilename;
 const confinementSymbol = Symbol('confinement-test-symbol');
 
 describe('require', () => {
-    describe('patchRequire', () => {
-        afterEach(() => {
-            NodeModule.prototype.require = originalRequire;
-        });
-
-        test('It should not throw', () => {
-            const functionToTest = (confinementSymbol) => patchRequire(confinementSymbol, new Map());
-
-            expect(functionToTest).not.toThrow();
-        });
-
-        test('It should override the require method with a new one', () => {
-            patchRequire(confinementSymbol, new Map());
-
-            expect(NodeModule.prototype.require).not.toBe(originalRequire);
-        });
-    });
-
     describe('patchRequire patched require version', () => {
         const requireMock = jest.fn();
         const futureConfinedModulesMap = new Map();
+        const moduleParentsIdMap = new Map();
 
         beforeEach(() => {
             futureConfinedModulesMap.clear();
+            moduleParentsIdMap.clear();
             requireMock.mockReset();
             module[confinementSymbol] = undefined;
             NodeModule.prototype.require = requireMock;
-            patchRequire(confinementSymbol, futureConfinedModulesMap);
+            patchRequire(confinementSymbol, futureConfinedModulesMap, moduleParentsIdMap, {});
         });
 
         afterEach(() => {
@@ -105,14 +89,20 @@ describe('require', () => {
         const futureConfinedModulesMap = new Map();
         const futureConfinedModulesMapSetSpy = jest.spyOn(futureConfinedModulesMap, 'set');
         const futureConfinedModulesMapDeleteSpy = jest.spyOn(futureConfinedModulesMap, 'delete');
-        const boundConfinedRequire = confinedRequire.bind(null, confinementSymbol, futureConfinedModulesMap);
+        const moduleParentsIdMap = new Map();
+        const moduleParentsIdMapSetSpy = jest.spyOn(moduleParentsIdMap, 'set');
+        const moduleParentsIdMapDeleteSpy = jest.spyOn(moduleParentsIdMap, 'delete');
+        const boundConfinedRequire = confinedRequire.bind(null, confinementSymbol, futureConfinedModulesMap, moduleParentsIdMap);
         const requireFunction = {call: jest.fn()};
 
         beforeEach(() => {
             futureConfinedModulesMap.clear();
+            moduleParentsIdMap.clear();
             requireFunction.call.mockReset();
             futureConfinedModulesMapSetSpy.mockReset();
             futureConfinedModulesMapDeleteSpy.mockReset();
+            moduleParentsIdMapSetSpy.mockReset();
+            moduleParentsIdMapDeleteSpy.mockReset();
             NodeModule._resolveFilename = jest.fn();
             NodeModule._resolveFilename.mockReturnValue('');
             NodeModule._cache[''] = {};

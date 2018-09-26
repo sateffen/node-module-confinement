@@ -1,9 +1,11 @@
-const {installGeneralConfinement} = require('../../../src/lib');
+const configure = require('../../../');
 
-installGeneralConfinement({
-    allowInternalModules: true,
-    blackList: ['jest'],
-    whiteList: [],
+configure({
+    generalConfinement: {
+        allowInternalModules: true,
+        blackList: ['jest'],
+        whiteList: [],
+    },
 });
 
 require('../loadjest');

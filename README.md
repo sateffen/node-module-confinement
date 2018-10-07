@@ -16,12 +16,12 @@ difference, except an error when something not allowed is happening.
 
 ## API
 
-The basic API consists of just one method: `configure(configuration)`. You can use it as follows:
+The basic API consists of just one function: `configure(configuration)`. You can use it as follows:
 
 ```js
-const {configure} = require('node-module-confinement');
+const configureNodeModuleConfinement = require('node-module-confinement');
 
-configure({
+configureNodeModuleConfinement({
     useRecursiveConfinement: true,
     patchWithConfinedRequire: false,
     generalConfinement: {
@@ -32,7 +32,7 @@ configure({
 });
 ```
 
-The `configure` method takes a configuration-object.
+The module itself is just the `configure` function and takes a configuration-object.
 
 ### Configuration object
 

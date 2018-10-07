@@ -1,7 +1,7 @@
 {
   "name": "node-module-confinement",
   "version": "0.0.0",
-  "main": "src/lib.js",
+  "main": "dist/node-module-confinement.js",
   "engines": {
     "node": ">=6.0.0"
   },
@@ -20,13 +20,19 @@
     "require"
   ],
   "scripts": {
+    "build": "rollup -c rollup.config.js",
     "lint": "eslint -c .eslintrc src",
-    "test": "jest --config=jest.json",
-    "test:watch": "jest --config=jest.json --watch"
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "jest --config=jest.unit.json",
+    "test:integration": "rollup -c rollup.config.js && jest --config=jest.integration.json",
+    "test:watch": "jest --config=jest.unit.json --watch"
   },
   "devDependencies": {
     "eslint": "~5.6.0",
     "eslint-config-google": "~0.10.0",
-    "jest": "~23.6.0"
+    "jest": "~23.6.0",
+    "rollup": "~0.66.4",
+    "rollup-plugin-commonjs": "~9.1.8",
+    "rollup-plugin-node-resolve": "~3.4.0"
   }
 }

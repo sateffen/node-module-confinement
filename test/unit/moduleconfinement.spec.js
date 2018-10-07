@@ -1,5 +1,5 @@
 const NodeModule = require('module');
-const ModuleConfinement = require('../src/moduleconfinement');
+const ModuleConfinement = require('../../src/moduleconfinement');
 
 describe('ModuleConfinement', () => {
     test('The constructor should not throw when no argument is given', () => {

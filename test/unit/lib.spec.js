@@ -1,7 +1,7 @@
-jest.mock('../src/setup');
-const setup = require('../src/setup');
+jest.mock('../../src/setup');
+const setup = require('../../src/setup');
 
-const configure = require('../src/lib');
+const configure = require('../../src/lib');
 
 describe('lib', () => {
     const generalConfinement = {};

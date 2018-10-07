@@ -4,7 +4,7 @@
     "bail": true,
     "collectCoverage": true,
     "errorOnDeprecated": true,
-    "roots": ["test"],
+    "roots": ["test/unit"],
     "testEnvironment": "node",
     "testMatch": ["**/*.spec.js"]
   }

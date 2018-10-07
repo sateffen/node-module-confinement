@@ -1,8 +1,8 @@
-jest.mock('../src/requirepatch');
+jest.mock('../../src/requirepatch');
 
 const NodeModule = require('module');
-const setup = require('../src/setup');
-const {patchRequire, confinedRequire} = require('../src/requirepatch');
+const setup = require('../../src/setup');
+const {patchRequire, confinedRequire} = require('../../src/requirepatch');
 
 const originalRequire = NodeModule.prototype.require;
 

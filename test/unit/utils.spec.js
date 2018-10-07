@@ -1,6 +1,6 @@
 const NodeModule = require('module');
-const ModuleConfinement = require('../src/moduleconfinement');
-const utils = require('../src/utils');
+const ModuleConfinement = require('../../src/moduleconfinement');
+const utils = require('../../src/utils');
 
 describe('utils', () => {
     describe('isAllowedToCall', () => {

@@ -1,10 +1,10 @@
-jest.mock('../src/utils');
+jest.mock('../../src/utils');
 
 const NodeModule = require('module');
-const {patchRequire, confinedRequire} = require('../src/requirepatch');
+const {patchRequire, confinedRequire} = require('../../src/requirepatch');
 
-const ModuleConfinement = require('../src/moduleconfinement');
-const utils = require('../src/utils');
+const ModuleConfinement = require('../../src/moduleconfinement');
+const utils = require('../../src/utils');
 
 const originalRequire = NodeModule.prototype.require;
 const originalNodeModuleResolveFilename = NodeModule._resolveFilename;

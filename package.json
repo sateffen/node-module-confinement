@@ -1,6 +1,6 @@
 {
   "name": "node-module-confinement",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "main": "dist/node-module-confinement.js",
   "engines": {
     "node": ">=6.0.0"
@@ -17,7 +17,8 @@
     "confine",
     "confinement",
     "security",
-    "require"
+    "require",
+    "module"
   ],
   "scripts": {
     "build": "rollup -c rollup.config.js",

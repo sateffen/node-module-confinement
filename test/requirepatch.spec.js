@@ -1,7 +1,7 @@
 jest.mock('../src/utils');
 
 const NodeModule = require('module');
-const {patchRequire, confinedRequire} = require('../src/require');
+const {patchRequire, confinedRequire} = require('../src/requirepatch');
 
 const ModuleConfinement = require('../src/moduleconfinement');
 const utils = require('../src/utils');
@@ -10,7 +10,7 @@ const originalRequire = NodeModule.prototype.require;
 const originalNodeModuleResolveFilename = NodeModule._resolveFilename;
 const confinementSymbol = Symbol('confinement-test-symbol');
 
-describe('require', () => {
+describe('requirepatch', () => {
     describe('patchRequire patched require version', () => {
         const requireMock = jest.fn();
         const futureConfinedModulesMap = new Map();

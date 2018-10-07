@@ -1,5 +1,5 @@
 const NodeModule = require('module');
-const {patchRequire, confinedRequire} = require('./require');
+const {patchRequire, confinedRequire} = require('./requirepatch');
 
 const confinementDefinitionSymbol = Symbol('node-module-confinement');
 const modulesInConfinedStartUp = new Map();

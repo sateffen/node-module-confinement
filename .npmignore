@@ -1,0 +1,10 @@
+.*
+coverage
+node_modules
+src
+test
+yarn-error.log
+jest.integration.json
+jest.unit.json
+rollup.config.js
+yarn.lock

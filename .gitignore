@@ -1,8 +1,9 @@
 .*
-node_modules
-yarn-error.log
 coverage
 dist
+node_modules
+yarn-error.log
 
 !.eslintrc
 !.gitignore
+!.npmignore

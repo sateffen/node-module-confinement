@@ -2,6 +2,23 @@
   "name": "node-module-confinement",
   "version": "0.0.0",
   "main": "src/lib.js",
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sateffen/node-module-confinement.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sateffen/node-module-confinement/issues"
+  },
+  "keywords": [
+    "confine",
+    "confinement",
+    "security",
+    "require"
+  ],
   "scripts": {
     "lint": "eslint -c .eslintrc src",
     "test": "jest --config=jest.json",

@@ -1,6 +1,7 @@
 {
   "name": "node-module-confinement",
-  "version": "1.0.0",
+  "description": "Confining require and node_modules for the extra bit of security",
+  "version": "1.0.1",
   "main": "dist/node-module-confinement.js",
   "engines": {
     "node": ">=6.0.0"

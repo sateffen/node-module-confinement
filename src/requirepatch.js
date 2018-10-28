@@ -81,9 +81,11 @@ function confinedRequire(aConfinementDefinitionSymbol, aModulesInConfinedStartUp
         const newModuleInstance = NodeModule._cache[newModuleFileKey];
 
         // then we define the property on the real module instance
-        Object.defineProperty(newModuleInstance, aConfinementDefinitionSymbol, {
-            value: confinementDefinition,
-        });
+        if (newModuleInstance[aConfinementDefinitionSymbol] === undefined) {
+            Object.defineProperty(newModuleInstance, aConfinementDefinitionSymbol, {
+                value: confinementDefinition,
+            });
+        }
 
         aModulesInConfinedStartUp.delete(newModuleFileKey);
         aModulesParentsMap.delete(newModuleFileKey);

@@ -120,7 +120,7 @@ const untrustedModule = module.confinedRequire('some-untrusted-module', {
 ## Caveats
 
 This module does not guarantee perfect security, it just helps with preventing unexpected or unwanted module usage.
-Here are some more things to take care of:
+Here are some more things to take care of by yourself:
 
 1. This module doesn't prevent `eval` or `new Function` stuff. Both help others to execute code, that can be anything.
 The good thing: That evaluated code uses the same `require` function, so at least the require-calls from inside `eval`

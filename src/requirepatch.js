@@ -39,7 +39,7 @@ function patchRequire(aConfinementSymbol, aModulesInStartUpMap, aModulesParentsM
                 }
             }
 
-            for (let iterator of confinementsToFulfill) {
+            for (const iterator of confinementsToFulfill) {
                 if (!isAllowedToCall(iterator[1], moduleToLoad)) {
                     throw new Error(`Module with id "${aThisContext.id}" wants to load forbidden module ${aArgumentsList[0]} (confined by module: ${iterator[0]})`);
                 }

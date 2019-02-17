@@ -1,7 +1,5 @@
 # node-module-confinement
 
-![Codeship Status for sateffen/node-module-confinement](https://app.codeship.com/projects/1cddd2b0-9582-0136-366d-3e732d40e2ee/status?branch=master)
-
 This package provides a simple way for confining modules and preventing them to load unwanted other modules.
 
 You can set up a blacklist and a whitelist for this confinement. You can tell the confinement to prevent node

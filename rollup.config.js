@@ -1,6 +1,4 @@
 const NodeModule = require('module');
-const commonjs = require('rollup-plugin-commonjs');
-const nodeResolve = require('rollup-plugin-node-resolve');
 
 module.exports = {
     input: 'src/lib.js',
@@ -10,9 +8,6 @@ module.exports = {
         sourceMap: false,
         interop: false,
     },
-    plugins: [
-        nodeResolve({}),
-        commonjs({}),
-    ],
+    plugins: [],
     external: NodeModule.builtinModules,
 };

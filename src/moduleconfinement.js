@@ -1,46 +1,66 @@
-const NodeModule = require('module');
+import * as NodeModule from 'module';
+import {isBoolean, isObject} from './utils';
 
 /**
- * Resolves given module name in given module context to the resolved filename
- * @param {Object} aModuleContext
- * @param {string} aModuleName
- * @return {string}
+ * Defines a module confinement
  */
-function resolveModule(aModuleContext, aModuleName) {
-    return NodeModule._resolveFilename(aModuleName, aModuleContext, false);
-}
-
-/**
- * Describes am module confinemint
- */
-class ModuleConfinement {
+export class ModuleConfinement {
     /**
-     * The constructor for the module confinement
+     * The constructor for a ModuleConfinement
      * @param {Object} aRawConfinement
-     * @param {Object} aModuleContext
+     * @param {NodeModule} aModuleContext
      */
     constructor(aRawConfinement, aModuleContext) {
-        const rawConfinement = aRawConfinement || {};
-        const resolveModuleFunction = resolveModule.bind(null, aModuleContext);
+        const moduleFileNameHelper = (aModuleName) => NodeModule._resolveFilename(aModuleName, aModuleContext, false);
+        const rawConfinement = typeof aRawConfinement === 'object' && aRawConfinement !== null ? aRawConfinement : {};
 
         /**
-         * Whether to allow internal modules completely or not
          * @type {boolean}
          */
-        this.allowInternalModules = Boolean(rawConfinement.allowInternalModules);
+        this.allowBuiltIns = isBoolean(rawConfinement.allowBuiltIns) ? rawConfinement.allowBuiltIns : true;
+        /**
+         * @type {boolean}
+         */
+        this.applyToChildren = isBoolean(rawConfinement.allowBuiltIns) ? rawConfinement.applyToChildren : false;
 
         /**
-         * The blacklist of modules to disallow completely
-         * @type {Array<string>}
+         * @type {Set<string>}
          */
-        this.blackList = Array.isArray(rawConfinement.blackList) ? rawConfinement.blackList.map(resolveModuleFunction) : [];
-
+        this.whiteList = new Set();
         /**
-         * The whitelist of modules to allow
-         * @type {Array<string>}
+         * @type {Set<string>}
          */
-        this.whiteList = Array.isArray(rawConfinement.whiteList) ? rawConfinement.whiteList.map(resolveModuleFunction) : [];
+        this.blackList = new Set();
+        /**
+         * @type {Map<string, string>}
+         */
+        this.redirect = new Map();
+
+        if (Array.isArray(rawConfinement.whiteList) && rawConfinement.whiteList.length > 0) {
+            for (let i = 0, iLen = rawConfinement.whiteList.length; i < iLen; i++) {
+                const modulePath = moduleFileNameHelper(rawConfinement.whiteList[i]);
+
+                this.whiteList.add(modulePath);
+            }
+        }
+
+        if (Array.isArray(rawConfinement.blackList) && rawConfinement.blackList.length > 0) {
+            for (let i = 0, iLen = rawConfinement.blackList.length; i < iLen; i++) {
+                const modulePath = moduleFileNameHelper(rawConfinement.blackList[i]);
+
+                this.blackList.add(modulePath);
+            }
+        }
+
+        if (isObject(rawConfinement.redirect)) {
+            const keys = Object.keys(rawConfinement.redirect);
+
+            for (let i = 0, iLen = keys.length; i < iLen; i++) {
+                const redirectFrom = moduleFileNameHelper(keys[i]);
+                const redirectTo = moduleFileNameHelper(rawConfinement.redirect[keys[i]]);
+
+                this.redirect.set(redirectFrom, redirectTo);
+            }
+        }
     }
 }
-
-module.exports = ModuleConfinement;

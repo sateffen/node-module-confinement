@@ -1,21 +1,56 @@
-const NodeModule = require('module');
+import * as NodeModule from 'module';
 
 /**
- * This function decides, whether given module is allowed to get called with given confinement
- * @param {ModuleConfinement} aConfinement
- * @param {string} aModule
- * @return {boolean}
+ * Checks whether given data is a node-module
+ * @param {any} aData The data to examine
+ * @return {boolean} The result
  */
-function isAllowedToCall(aConfinement, aModule) {
-    const notBlackListed = !aConfinement.blackList.includes(aModule);
-    const isBuiltInModule = NodeModule.builtinModules.includes(aModule);
-
-    return aConfinement.whiteList.includes(aModule) ||
-        aConfinement.allowInternalModules && isBuiltInModule && notBlackListed ||
-        aConfinement.allowInternalModules && !isBuiltInModule && notBlackListed ||
-        !aConfinement.allowInternalModules && !isBuiltInModule && notBlackListed;
+export function isNodeModule(aData) {
+    return aData instanceof NodeModule;
 }
 
-module.exports = {
-    isAllowedToCall,
-};
+/**
+ * Checks whether given data is a boolean
+ * @param {any} aData The data to examine
+ * @return {boolean} The result
+ */
+export function isBoolean(aData) {
+    return typeof aData === 'boolean';
+}
+
+/**
+ * Checks whether given data is an object
+ * @param {any} aData The data to examine
+ * @return {boolean} The result
+ */
+export function isObject(aData) {
+    return typeof aData === 'object' && aData !== null && !Array.isArray(aData);
+}
+
+/**
+ * A simple helper class, that acts as data cell
+ */
+export class Cell {
+    /**
+     * The constructor
+     */
+    constructor() {
+        this._data = null;
+    }
+
+    /**
+     * Returns the content of the cell
+     * @return {any} The cell data
+     */
+    get() {
+        return this._data;
+    }
+
+    /**
+     * Writes given data to the cell
+     * @param {any} aNewData The data to write
+     */
+    set(aNewData) {
+        this._data = aNewData;
+    }
+}

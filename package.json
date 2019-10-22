@@ -1,7 +1,7 @@
 {
   "name": "node-module-confinement",
   "description": "Confining require and node_modules for the extra bit of security",
-  "version": "1.0.3",
+  "version": "2.0.0-dev",
   "main": "dist/node-module-confinement.js",
   "engines": {
     "node": ">=8.0.0"
@@ -18,8 +18,14 @@
     "confine",
     "confinement",
     "security",
+    "secure",
     "require",
-    "module"
+    "module",
+    "policy",
+    "policies",
+    "redirect",
+    "replace",
+    "isolation"
   ],
   "scripts": {
     "prepare": "npm run build",
@@ -31,11 +37,9 @@
     "test:watch": "jest --config=jest.unit.json --watch"
   },
   "devDependencies": {
-    "eslint": "~6.2.2",
-    "eslint-config-google": "~0.13.0",
+    "eslint": "~6.5.1",
+    "eslint-config-google": "~0.14.0",
     "jest": "~24.9.0",
-    "rollup": "~1.20.3",
-    "rollup-plugin-commonjs": "~10.1.0",
-    "rollup-plugin-node-resolve": "~5.2.0"
+    "rollup": "~1.25.0"
   }
 }

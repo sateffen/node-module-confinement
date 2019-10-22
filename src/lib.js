@@ -1,37 +1,75 @@
-const {init, installGeneralConfinement, patchConfinedRequire} = require('./setup');
-
-let nodeModuleConfinementIsConfigured = false;
+import * as NodeModule from 'module';
+import {ModuleConfinement} from './moduleconfinement';
+import {installRequireProxy} from './requireproxy';
+import {confinementsMap, defaultConfinementCell, rootModuleCell} from './shared';
+import {installAddons} from './addons';
+import {isObject, isNodeModule} from './utils';
 
 /**
- * typedef {Object} NodeModuleConfinementConfiguration
- * @property {Object} generalConfinement
- * @property {boolean} patchWithConfinedRequire
- * @property {boolean} useRecursiveConfinement
+ * @typedef RawModuleConfinement
+ * @property {boolean} [allowBuiltIns=true]
+ * @property {boolean} [applyToChildren=false]
+ * @property {Array<string>} [whiteList=[]]
+ * @property {Array<string>} [blackList=[]]
+ * @property {Object} [redirect={}]
  */
 
 /**
- * Configures the node-module-confinement
- * @param {NodeModuleConfinementConfiguration} aConfiguration The node-module-confinement configuration
+ * @typedef AddonsConfig
+ * @property {boolean} [trapEval=false]
+ * @property {boolean} [trapFunction=false]
+ * @property {boolean} [freezeModules=false]
  */
-function configure(aConfiguration) {
-    if (nodeModuleConfinementIsConfigured) {
-        throw new Error('node-module-confinement is already configured, tried to configure it a second time');
+
+/**
+ * @typedef NodeModuleConfinementOptions
+ * @property {RawModuleConfinement} [defaultConfinement={}]
+ * @property {Object} [confinements={}]
+ * @property {AddonsConfig} [addons={}]
+ */
+
+/**
+ * Configures all confinements
+ * @param {NodeModule} aRootModule
+ * @param {NodeModuleConfinementOptions} aOptions
+ */
+function setup(aRootModule, aOptions) {
+    // first validate the given arguments
+    if (!isNodeModule(aRootModule)) {
+        throw new TypeError(`NodeModuleConfinement configure: First parameter needs to be an instance of NodeModule`);
+    }
+    else if (!isObject(aOptions)) {
+        throw new TypeError(`NodeModuleConfinement configure: Second parameter needs to be an object, got ${typeof aOptions}`);
     }
 
-    if (!aConfiguration || typeof aConfiguration !== 'object') {
-        throw new TypeError('node-module-confinement needs an object as configuration');
+    // then write all option data to the shared references
+    rootModuleCell.set(aRootModule);
+
+    if (isObject(aOptions.defaultConfinement)) {
+        defaultConfinementCell.set(new ModuleConfinement(aOptions.defaultConfinement, aRootModule));
+    }
+    else {
+        defaultConfinementCell.set(new ModuleConfinement({}, aRootModule));
     }
 
-    if (aConfiguration.generalConfinement) {
-        installGeneralConfinement(aConfiguration.generalConfinement);
+    if (isObject(aOptions.confinements)) {
+        const keys = Object.keys(aOptions.confinements);
+
+        for (let i = 0, iLen = keys.length; i < iLen; i++) {
+            const targetModule = NodeModule._resolveFilename(keys[i], aRootModule, false);
+            const confinement = new ModuleConfinement(aOptions.confinements[keys[i]], aRootModule);
+
+            confinementsMap.set(targetModule, confinement);
+        }
     }
 
-    if (aConfiguration.patchWithConfinedRequire) {
-        patchConfinedRequire();
+    // if any traps should get installed, call the trap installer
+    if (isObject(aOptions.addons)) {
+        installAddons(aOptions.addons);
     }
 
-    init(aConfiguration);
-    nodeModuleConfinementIsConfigured = true;
+    // Then install the require proxy, that actually prevents bad things from happening
+    installRequireProxy();
 }
 
-module.exports = configure;
+module.exports.setup = setup;

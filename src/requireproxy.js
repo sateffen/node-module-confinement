@@ -8,7 +8,7 @@ import {isNodeModule} from './utils';
  * @param {string} aModule
  * @return {boolean}
  */
-function isAllowedToCall(aConfinement, aModule) {
+export function isAllowedToCall(aConfinement, aModule) {
     const notBlackListed = !aConfinement.blackList.has(aModule);
     const isBuiltInModule = NodeModule.builtinModules.includes(aModule);
     const allowBuiltIns = aConfinement.allowBuiltIns;
@@ -24,7 +24,7 @@ function isAllowedToCall(aConfinement, aModule) {
  * @param {string} aModule
  * @return {ModuleConfinement | null}
  */
-function findConfinementFor(aModuleContext) {
+export function findConfinementFor(aModuleContext) {
     const rootModule = rootModuleCell.get();
     let targetConfinement = defaultConfinementCell.get();
 

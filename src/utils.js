@@ -1,15 +1,6 @@
 import * as NodeModule from 'module';
 
 /**
- * Checks whether given data is a node-module
- * @param {any} aData The data to examine
- * @return {boolean} The result
- */
-export function isNodeModule(aData) {
-    return aData instanceof NodeModule;
-}
-
-/**
  * Checks whether given data is a boolean
  * @param {any} aData The data to examine
  * @return {boolean} The result
@@ -25,6 +16,20 @@ export function isBoolean(aData) {
  */
 export function isObject(aData) {
     return typeof aData === 'object' && aData !== null && !Array.isArray(aData);
+}
+
+/**
+ * Checks whether given data is a node-module
+ * @param {any} aData The data to examine
+ * @return {boolean} The result
+ */
+export function isNodeModule(aData) {
+    try {
+        return aData instanceof NodeModule;
+    }
+    catch (e) {
+        return false;
+    }
 }
 
 /**

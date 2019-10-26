@@ -3,7 +3,7 @@ import * as NodeModule from 'module';
 /**
  * Installs a trap for global.Function, to prevent usage of that
  */
-function installTrapFunctionAddon() {
+export function installTrapFunctionAddon() {
     global.Function = new Proxy(global.Function, {
         construct() {
             throw new Error('NodeModuleConfinement: Found call of "new Function()", which is not allowed.');
@@ -17,7 +17,7 @@ function installTrapFunctionAddon() {
 /**
  * Installs a trap for global.eval, to prevent usage of that
  */
-function installTrapEvalAddon() {
+export function installTrapEvalAddon() {
     global.eval = new Proxy(global.eval, {
         apply() {
             throw new Error('NodeModuleConfinement: Found call of "eval()", which is not allowed.');
@@ -28,7 +28,7 @@ function installTrapEvalAddon() {
 /**
  * Installs a proxy for freezing modules, to prevent patching modules unexpectedly
  */
-function installFreezeModuleAddon() {
+export function installFreezeModuleAddon() {
     NodeModule.prototype.require = new Proxy(NodeModule.prototype.require, {
         apply(aTarget, aThisContext, aArgumentsList) {
             return Object.freeze(Reflect.apply(aTarget, aThisContext, aArgumentsList));

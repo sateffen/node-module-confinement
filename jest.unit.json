@@ -1,0 +1,14 @@
+{
+    "automock": false,
+    "browser": false,
+    "bail": false,
+    "collectCoverage": true,
+    "errorOnDeprecated": true,
+    "roots": [
+        "test/unit"
+    ],
+    "testEnvironment": "node",
+    "testMatch": [
+        "**/*.spec.js"
+    ]
+}

@@ -1,6 +1,3 @@
-import * as NodeModule from 'module';
-import {isObject} from './utils';
-
 /**
  * Installs a trap for global.Function, to prevent usage of that
  */

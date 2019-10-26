@@ -1,0 +1,13 @@
+{
+    "automock": false,
+    "browser": false,
+    "bail": false,
+    "errorOnDeprecated": true,
+    "roots": [
+        "test/integration"
+    ],
+    "testEnvironment": "node",
+    "testMatch": [
+        "**/*.spec.js"
+    ]
+}

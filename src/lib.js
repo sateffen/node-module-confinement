@@ -18,7 +18,6 @@ import {isObject, isNodeModule} from './utils';
  * @typedef AddonsConfig
  * @property {boolean} [trapEval=false]
  * @property {boolean} [trapFunction=false]
- * @property {boolean} [freezeModules=false]
  */
 
 /**

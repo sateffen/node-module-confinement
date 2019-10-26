@@ -55,8 +55,7 @@ const confinementConfiguration = {
     },
     addons: {
         trapEval: false,
-        trapFunction: false,
-        freezeModules: false
+        trapFunction: false
     }
 };
 ```
@@ -125,11 +124,3 @@ a hidden `eval` function. Stuff like `Function('console.log(process.pid);')()` m
 
 To prevent usage of this hidden eval-like stuff, you can apply a trap by enabling this option. This trap will prevent all `Function(...)`
 and `new Function(...)` calls and throw an error each time it happens.
-
-#### freezeModules
-
-This is a simple spell, but quite unbreakable - and maybe troublesome. This module will call `Object.freeze` on each module,
-that gets returned from `require(...)`. This way modules can't get "patched" by bad versions of malicious code (like malicious
-node-modules), but there is one catch: Cyclic dependencies don't work anymore.
-
-In 90%, maybe even more, this should not break your application, but not all applications work flawlessly with this.

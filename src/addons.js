@@ -1,4 +1,5 @@
 import * as NodeModule from 'module';
+import {isObject} from './utils';
 
 /**
  * Installs a trap for global.Function, to prevent usage of that
@@ -26,17 +27,6 @@ export function installTrapEvalAddon() {
 }
 
 /**
- * Installs a proxy for freezing modules, to prevent patching modules unexpectedly
- */
-export function installFreezeModuleAddon() {
-    NodeModule.prototype.require = new Proxy(NodeModule.prototype.require, {
-        apply(aTarget, aThisContext, aArgumentsList) {
-            return Object.freeze(Reflect.apply(aTarget, aThisContext, aArgumentsList));
-        },
-    });
-}
-
-/**
  * Installs all traps referenced by the options
  * @param {AddonsConfig} aOptions
  */
@@ -47,9 +37,5 @@ export function installAddons(aOptions) {
 
     if (aOptions.trapFunction === true) {
         installTrapFunctionAddon();
-    }
-
-    if (aOptions.freezeModules === true) {
-        installFreezeModuleAddon();
     }
 }

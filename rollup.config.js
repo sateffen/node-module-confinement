@@ -7,6 +7,7 @@ module.exports = {
         format: 'cjs',
         sourceMap: false,
         interop: false,
+        preferConst: true,
     },
     plugins: [],
     external: NodeModule.builtinModules,

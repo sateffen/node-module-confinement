@@ -51,7 +51,7 @@ export function findConfinementFor(aModuleContext) {
  * Installs a proxy for the require function in node, confining all modules based on shared rules
  */
 export function installRequireProxy() {
-    NodeModule.prototype.require = new Proxy(NodeModule.prototype.require, {
+    NodeModule.Module.prototype.require = new Proxy(NodeModule.Module.prototype.require, {
         apply(aTarget, aThisContext, aArgumentsList) {
             const moduleFileName = NodeModule._resolveFilename(aArgumentsList[0], aThisContext, false);
             const confinementToFulfill = findConfinementFor(aThisContext);

@@ -1,11 +1,13 @@
-const {setup} = require('../../../dist/node-module-confinement');
+const {setup} = require('../../../../dist/node-module-confinement');
 
 setup(module, {
     defaultConfinement: {
         allowBuiltIns: false,
         whiteList: [],
     },
-    confinements: {},
+    addons: {
+        trapFunction: true,
+    },
 });
 
 require('./second');

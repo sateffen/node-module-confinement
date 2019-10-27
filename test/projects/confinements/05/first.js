@@ -1,4 +1,4 @@
-const {setup} = require('../../../dist/node-module-confinement');
+const {setup} = require('../../../../dist/node-module-confinement');
 
 setup(module, {
     defaultConfinement: {

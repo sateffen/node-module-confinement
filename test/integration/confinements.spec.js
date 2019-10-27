@@ -1,9 +1,9 @@
 import {execFile} from 'child_process';
 import {join} from 'path';
 
-describe('Integration', () => {
-    it('should fail the "one" project', (done) => {
-        const modulePath = join(__dirname, '../projects/one/first.js');
+describe('Confinement', () => {
+    it('should fail the "01" project', (done) => {
+        const modulePath = join(__dirname, '../projects/confinements/01/first.js');
 
         execFile('node', [modulePath], (aError) => {
             expect(aError).not.toBeNull();
@@ -12,8 +12,8 @@ describe('Integration', () => {
         });
     });
 
-    it('should fail the "two" project', (done) => {
-        const modulePath = join(__dirname, '../projects/two/first.js');
+    it('should fail the "02" project', (done) => {
+        const modulePath = join(__dirname, '../projects/confinements/02/first.js');
 
         execFile('node', [modulePath], (aError) => {
             expect(aError).not.toBeNull();
@@ -22,8 +22,8 @@ describe('Integration', () => {
         });
     });
 
-    it('should fail the "three" project', (done) => {
-        const modulePath = join(__dirname, '../projects/three/first.js');
+    it('should fail the "03" project', (done) => {
+        const modulePath = join(__dirname, '../projects/confinements/03/first.js');
 
         execFile('node', [modulePath], (aError) => {
             expect(aError).not.toBeNull();
@@ -32,8 +32,8 @@ describe('Integration', () => {
         });
     });
 
-    it('should not fail the "four" project', (done) => {
-        const modulePath = join(__dirname, '../projects/four/first.js');
+    it('should not fail the "04" project', (done) => {
+        const modulePath = join(__dirname, '../projects/confinements/04/first.js');
 
         execFile('node', [modulePath], (aError) => {
             expect(aError).toBeNull();
@@ -42,8 +42,8 @@ describe('Integration', () => {
         });
     });
 
-    it('should not fail the "five" project', (done) => {
-        const modulePath = join(__dirname, '../projects/five/first.js');
+    it('should not fail the "05" project', (done) => {
+        const modulePath = join(__dirname, '../projects/confinements/05/first.js');
 
         execFile('node', [modulePath], (aError) => {
             expect(aError).toBeNull();

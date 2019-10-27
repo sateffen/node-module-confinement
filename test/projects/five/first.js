@@ -7,7 +7,7 @@ setup(module, {
     },
     confinements: {
         './second': {
-            applyToChildren: true,
+            applyToChildren: false,
             allowBuiltIns: false,
             whiteList: [],
         },

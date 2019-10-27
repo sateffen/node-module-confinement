@@ -2,14 +2,13 @@ const {setup} = require('../../../dist/node-module-confinement');
 
 setup(module, {
     defaultConfinement: {
-        allowBuiltIns: true,
+        allowBuiltIns: false,
         whiteList: [],
     },
     confinements: {
-        './second': {
-            applyToChildren: true,
+        './third': {
             allowBuiltIns: false,
-            whiteList: [],
+            whiteList: ['fs'],
         },
     },
 });

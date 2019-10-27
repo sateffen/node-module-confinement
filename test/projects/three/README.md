@@ -1,1 +1,1 @@
-Example project, that should work.
+Example project, that should fail.

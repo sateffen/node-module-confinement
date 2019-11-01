@@ -1,7 +1,5 @@
 # node-module-confinement
 
-**This branch currently contains a complete rewrite of node-module-confinement. This is not tested yet and not complete. Use with care.**
-
 This package provides a simple way for confining modules and preventing them to load unwanted other modules,
 or redirect modules to load to different ones.
 

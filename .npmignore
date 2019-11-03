@@ -1,5 +1,6 @@
 .*
 coverage
+debug
 node_modules
 src
 test

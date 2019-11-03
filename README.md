@@ -4,19 +4,25 @@ This package provides a simple way for confining modules and preventing them to 
 or redirect modules to load to different ones.
 
 You can set up a blacklist and a whitelist for this confinement. You can tell the confinement to prevent node
-internal modules completely, only allowing a few ones by whitelist. That's useful when loading code you don't
-know or trust, like packages from npm or plugins for your software.
+internal modules completely, only allowing a few ones by whitelist. Additionally, you can redirect require calls
+to your own modules, like redirecting `fs` to `safe-fs`, which provides a trusted subset of fs-access.
 
 If anything defies the confinement, an error is thrown to prevent anything bad from happening. The error tells
 you which confinement was defied and which module did this.
 
-Additionally, you can define redirects of modules to load to different modules. You can use this to redirect
-calls to `fs` to your own version of `fs` for example, to filter filesystem functions as well.
+On top of all that, this module comes with some "addons", which allow you to setup some traps to prevent unwanted
+code execution methods.
 
-This module integrates deeply in node by providing a proxy for the `require` method. There shouldn't be any
-difference, except an error when something not allowed is happening.
+## Why
 
-Additionally, there is an option do install some more "addons", which setup traps, or harden security.
+Using dependencies is dangerous. Installing simple npm-packages might download tons of other unknown dependencies,
+which you can't review all. If only one of such dependencies contain malicious code, you're screwed.
+
+This module helps to reduce the attack-surface, as you can limit access to node internal modules or critical configuration
+files. That way bad code leads to an error, preventing bad stuff from happening.
+
+So this module helps with preventing supply-chain-attacks or dependency-attacks, and helps to secure your application
+by simply enforcing policies.
 
 ## API
 

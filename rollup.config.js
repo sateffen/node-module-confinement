@@ -5,7 +5,7 @@ module.exports = {
     output: {
         file: 'dist/node-module-confinement.js',
         format: 'cjs',
-        sourceMap: false,
+        sourcemap: false,
         interop: false,
         preferConst: true,
     },

@@ -38,11 +38,11 @@
   },
   "devDependencies": {
     "@babel/core": "~7.7.7",
-    "@babel/plugin-transform-modules-commonjs": "~7.7.5",
-    "babel-jest": "~24.9.0",
+    "@babel/plugin-transform-modules-commonjs": "~7.7.3",
+    "babel-jest": "~25.1.0",
     "eslint": "~6.8.0",
     "eslint-config-google": "~0.14.0",
-    "jest": "~24.9.0",
-    "rollup": "~1.27.14"
+    "jest": "~25.1.0",
+    "rollup": "~2.0.6"
   }
 }

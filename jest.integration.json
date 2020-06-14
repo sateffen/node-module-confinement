@@ -1,6 +1,5 @@
 {
     "automock": false,
-    "browser": false,
     "bail": false,
     "errorOnDeprecated": true,
     "roots": [

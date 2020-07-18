@@ -37,12 +37,12 @@
     "test:watch": "jest --config=jest.unit.json --watch"
   },
   "devDependencies": {
-    "@babel/core": "~7.10.2",
-    "@babel/plugin-transform-modules-commonjs": "~7.10.1",
-    "babel-jest": "~26.0.1",
-    "eslint": "~7.2.0",
+    "@babel/core": "~7.10.5",
+    "@babel/plugin-transform-modules-commonjs": "~7.10.4",
+    "babel-jest": "~26.1.0",
+    "eslint": "~7.5.0",
     "eslint-config-google": "~0.14.0",
-    "jest": "~26.0.1",
-    "rollup": "~2.16.1"
+    "jest": "~26.1.0",
+    "rollup": "~2.22.0"
   }
 }

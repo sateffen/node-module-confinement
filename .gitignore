@@ -5,8 +5,8 @@ node_modules
 yarn-error.log
 debug
 
+!.github/
 !.babelrc
 !.eslintrc
 !.gitignore
 !.npmignore
-!.travis.yml

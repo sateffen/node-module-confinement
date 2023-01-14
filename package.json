@@ -28,21 +28,21 @@
     "isolation"
   ],
   "scripts": {
-    "prepare": "npm run build",
+    "prepare": "yarn run build",
     "build": "rollup -c rollup.config.js",
     "lint": "eslint -c .eslintrc src",
-    "test": "npm run test:unit && npm run test:integration",
+    "test": "yarn run test:unit && yarn run test:integration",
     "test:unit": "jest --config=jest.unit.json",
     "test:integration": "rollup -c rollup.config.js && jest --config=jest.integration.json",
     "test:watch": "jest --config=jest.unit.json --watch"
   },
   "devDependencies": {
-    "@babel/core": "~7.15.5",
-    "@babel/plugin-transform-modules-commonjs": "~7.15.4",
-    "babel-jest": "~27.2.0",
-    "eslint": "~7.32.0",
-    "eslint-config-google": "~0.14.0",
-    "jest": "~27.2.0",
-    "rollup": "~2.56.3"
+    "@babel/core": "7.20.12",
+    "@babel/plugin-transform-modules-commonjs": "7.20.11",
+    "babel-jest": "29.3.1",
+    "eslint": "8.31.0",
+    "eslint-config-google": "0.14.0",
+    "jest": "29.3.1",
+    "rollup": "3.10.0"
   }
 }

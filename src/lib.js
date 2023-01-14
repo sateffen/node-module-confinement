@@ -1,4 +1,4 @@
-import * as NodeModule from 'module';
+import * as NodeModule from 'node:module';
 import {ModuleConfinement} from './moduleconfinement';
 import {installRequireProxy} from './requireproxy';
 import {confinementsMap, defaultConfinementCell, rootModuleCell} from './shared';

@@ -6,9 +6,12 @@ module.exports = {
         file: 'dist/node-module-confinement.js',
         format: 'cjs',
         sourcemap: false,
-        interop: false,
-        preferConst: true,
+        generatedCode: {
+            constBindings: true,
+        },
+        interop: 'compat',
     },
     plugins: [],
-    external: NodeModule.builtinModules,
+    external: NodeModule.builtinModules
+        .map((aModuleName) => `node:${aModuleName}`),
 };

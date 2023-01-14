@@ -1,4 +1,4 @@
-import * as NodeModule from 'module';
+import * as NodeModule from 'node:module';
 
 /**
  * Checks whether given data is a boolean
@@ -24,12 +24,7 @@ export function isObject(aData) {
  * @return {boolean} The result
  */
 export function isNodeModule(aData) {
-    try {
-        return aData instanceof NodeModule;
-    }
-    catch (e) {
-        return false;
-    }
+    return aData instanceof NodeModule.Module;
 }
 
 /**

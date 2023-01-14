@@ -1,4 +1,4 @@
-import * as NodeModule from 'module';
+import * as NodeModule from 'node:module';
 import {confinementsMap, defaultConfinementCell, rootModuleCell} from './shared';
 import {isNodeModule} from './utils';
 

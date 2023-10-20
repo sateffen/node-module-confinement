@@ -7,7 +7,7 @@ module.exports = {
         format: 'cjs',
         sourcemap: false,
         generatedCode: {
-            constBindings: true,
+            preset: 'es2015',
         },
         interop: 'compat',
     },
